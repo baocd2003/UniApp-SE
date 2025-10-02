@@ -1,0 +1,37 @@
+{
+  "students": [
+    {
+      "id": 673358,
+      "name": "bao",
+      "email": "bao.cao@university.com",
+      "password": "Baocao1234",
+      "enrollments": []
+    }
+  ],
+  "subjects": [
+    {
+      "id": 541,
+      "name": "Mathematics"
+    },
+    {
+      "id": 455,
+      "name": "Physics"
+    },
+    {
+      "id": 742,
+      "name": "Chemistry"
+    },
+    {
+      "id": 1097,
+      "name": "Biology"
+    },
+    {
+      "id": 764,
+      "name": "Computer Science"
+    },
+    {
+      "id": 97,
+      "name": "English Literature"
+    }
+  ]
+}
