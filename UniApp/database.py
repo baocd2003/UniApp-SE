@@ -2,7 +2,7 @@ import json
 import os
 from typing import List, Dict, Optional
 from student import Student
-
+from subject import Subject
 
 class JSONDatabase:
     
@@ -26,6 +26,7 @@ class JSONDatabase:
             with open(self.filename, 'w') as file:
                 json.dump(initial_data, file, indent=2)
     
+    # Read data from the json file
     def _read_data(self) -> Dict:
         try:
             with open(self.filename, 'r') as file:
@@ -33,7 +34,21 @@ class JSONDatabase:
         except (FileNotFoundError, json.JSONDecodeError):
             return {"students": [], "subjects": []}
     
+    # Write data to the json file
     def _write_data(self, data: Dict):
         with open(self.filename, 'w') as file:
             json.dump(data, file, indent=2)
     
+    # Add subject to the json file
+    def add_subject(self, subject):
+        data = self._read_data()
+        data["subjects"].append({
+            "id": subject.id,
+            "name": subject.name,
+        })
+        self._write_data(data)
+    
+    # Get all subjects from the json file
+    def get_all_subjects(self) -> List:
+        data = self._read_data()
+        return data.get("subjects", [])

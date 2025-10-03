@@ -13,14 +13,3 @@ class Student:
         self.password = password
         self.enrollments: List[Subject] = []
     
-
-        """Create Student instance from dictionary."""
-        # Handle missing fields gracefully
-        student = cls(
-            data.get("id", 0), 
-            data.get("name", ""), 
-            data.get("email", ""), 
-            data.get("password", "")
-        )
-        student.enrollments = [Subject.from_dict(s) for s in data.get("enrollments", data.get("subjects", []))]
-        return student
