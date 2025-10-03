@@ -55,7 +55,7 @@ class UniApp:
     def _handle_admin_system(self):
         """Handle admin system operations."""
         while True:
-            choice = input("Admin System (c/g/p/r/s/x): ").lower()
+            choice = input("Admin System (c/g/p/r/s/x/t): ").lower()
             
             if choice == 'x':
                 break
@@ -69,6 +69,10 @@ class UniApp:
                 print("Partitioning Students")
             elif choice == 'r':
                 print("Removing Student")
+            elif choice == 't':
+                subject_name = input("Enter subject name: ")
+                new_subject = self.subject_controller.create_subject(subject_name)
+                print(f"Created new subject: {new_subject}")
 
 if __name__ == "__main__":
     app = UniApp()
