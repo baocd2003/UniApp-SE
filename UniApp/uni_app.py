@@ -31,9 +31,17 @@ class UniApp:
             if choice == 'x':
                 break
             elif choice == 'r':
-                print("Registering Student")
+                self.student_controller.register_student(
+                    email=input("Enter email: "),
+                    password=input("Enter password: ")
+                )
             elif choice == 'l':
-                print("Logging in Student")
+                self.student_controller.login_student(
+                    email=input("Enter email: "),
+                    password=input("Enter password: ")
+                )
+                if self.student_controller.current_student:
+                    self._handle_student_menu()
     
     def _handle_student_menu(self):
         """Handle student course menu after successful login."""
@@ -44,7 +52,7 @@ class UniApp:
                 self.student_controller.current_student = None
                 break
             elif choice == 'e':
-                print("Enrolling Subject")
+                self.student_controller.enroll_subject()
             elif choice == 'r':
                 print("Removing Subject")
             elif choice == 's':
