@@ -2,6 +2,7 @@ import json
 import os
 from typing import List, Dict, Optional
 from student import Student
+import student
 from subject import Subject
 
 class JSONDatabase:
@@ -52,6 +53,50 @@ class JSONDatabase:
     def get_all_subjects(self) -> List:
         data = self._read_data()
         return data.get("subjects", [])
+    
+    def get_all_students(self) -> List:
+        data = self._read_data()
+        return data.get("students", [])
+    
+    def add_student(self, student: Student):
+        data = self._read_data()
+        data["students"].append({
+            "id": student.id,
+            "name": student.name,
+            "email": student.email,
+            "password": student.password,
+            "enrollments": [
+                {
+                    "id": subject.id,
+                    "name": subject.name,
+                    "mark": subject.mark,
+                    "grade": subject.grade
+                } for subject in student.enrollments
+            ] if student.enrollments is not None else []
+        })
+        self._write_data(data)
+
+    def update_student(self, student: Student):
+        data = self._read_data()
+        for i, student_data in enumerate(data["students"]):
+            if student_data.get("id") == student.id:
+                data["students"][i] = {
+                    "id": student.id,
+                    "name": student.name,
+                    "email": student.email,
+                    "password": student.password,
+                    "enrollments": [
+                        {
+                            "id": subject.id,
+                            "name": subject.name,
+                            "mark": subject.mark,
+                            "grade": subject.grade
+                        } for subject in student.enrollments
+                    ] if student.enrollments is not None else []
+                }
+                break
+
+        self._write_data(data)
 
     # Lookup student email & password
     def find_student(self, email, password):
@@ -62,6 +107,3 @@ class JSONDatabase:
                 return student
         return None
     
-    # Get all students
-    def get_all_students(self):
-        return self._read_data().get("students", [])

@@ -13,3 +13,15 @@ class Student:
         self.password = password
         self.enrollments: List[Subject] = []
     
+    @staticmethod
+    def _validate_email(email: str) -> bool:
+        pattern = r'^[a-zA-Z]+\.[a-zA-Z]+@university\.com$'
+        return bool(re.match(pattern, email))
+     
+    @staticmethod
+    def _validate_password(password: str) -> bool:
+        pattern = r'^[A-Z][a-zA-Z]{4,}\d{3,}$'
+        return bool(re.match(pattern, password))
+
+    
+

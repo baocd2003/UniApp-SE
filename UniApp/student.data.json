@@ -5,6 +5,20 @@
       "name": "bao",
       "email": "bao.cao@university.com",
       "password": "Baocao1234",
+      "enrollments": [
+        {
+          "id": 1097,
+          "name": "Biology",
+          "mark": 92,
+          "grade": "HD"
+        }
+      ]
+    },
+    {
+      "id": 1110,
+      "name": "bao",
+      "email": "paopao.cao@university.com",
+      "password": "Baocao1234",
       "enrollments": []
     }
   ],

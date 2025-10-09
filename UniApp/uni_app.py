@@ -31,7 +31,10 @@ class UniApp:
             if choice == 'x':
                 break
             elif choice == 'r':
-                print("Registering Student")
+                self.student_controller.register_student(
+                    email=input("Enter email: "),
+                    password=input("Enter password: ")
+                )
             elif choice == 'l':
                 attempts = 3
                 for attempt in range(attempts):
@@ -55,7 +58,7 @@ class UniApp:
                 self.student_controller.current_student = None
                 break
             elif choice == 'e':
-                print("Enrolling Subject")
+                self.student_controller.enroll_subject()
             elif choice == 'r':
                 print("Removing Subject")
             elif choice == 's':
