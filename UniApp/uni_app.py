@@ -60,7 +60,7 @@ class UniApp:
             elif choice == 'e':
                 self.student_controller.enroll_subject()
             elif choice == 'r':
-                print("Removing Subject")
+                self.student_controller.remove_subject()
             elif choice == 's':
                 print("Showing Subjects")
             elif choice == 'c':
