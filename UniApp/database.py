@@ -97,3 +97,13 @@ class JSONDatabase:
                 break
 
         self._write_data(data)
+
+    # Lookup student email & password
+    def find_student(self, email, password):
+        data = self._read_data()
+
+        for student in data.get("students", []):
+            if student.get("email") == email and student.get("password") == password:
+                return student
+        return None
+    

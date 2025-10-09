@@ -36,12 +36,18 @@ class UniApp:
                     password=input("Enter password: ")
                 )
             elif choice == 'l':
-                self.student_controller.login_student(
-                    email=input("Enter email: "),
-                    password=input("Enter password: ")
-                )
-                if self.student_controller.current_student:
-                    self._handle_student_menu()
+                attempts = 3
+                for attempt in range(attempts):
+                    email = input("Enter email: ")
+                    password = input("Enter password: ")
+                    
+                    if self.student_controller.login(email, password):
+                        print("Login Successful")
+                        self._handle_student_menu()
+                    else:
+                        print("Invalid email or password, try again")
+                else:
+                    print("Too many failed attempts. Returning to the Student menu.")           
     
     def _handle_student_menu(self):
         """Handle student course menu after successful login."""
@@ -72,9 +78,9 @@ class UniApp:
             elif choice == 'c':
                 print("Clearing Students")
             elif choice == 'g':
-                print("Grouping Students")
+                self.student_controller.group_by_grade()
             elif choice == 'p':
-                print("Partitioning Students")
+                self.student_controller.pass_fail_partition()
             elif choice == 'r':
                 print("Removing Student")
             elif choice == 't':
