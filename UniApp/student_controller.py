@@ -49,6 +49,11 @@ class StudentController:
             print("Email and password are required.")
             return False
         
+        # Validate email and password format
+        if not Student._validate_email(email) or not Student._validate_password(password):
+            print("Invalid email or password format.")
+            return False
+        
         # Find student by email
         student_data = self.is_existed(email)
         if student_data is None:
@@ -69,7 +74,7 @@ class StudentController:
         )
         # Load enrollments if they exist
         if 'enrollments' in student_data:
-            from subject import Subject
+            
             self.current_student.enrollments = [
                 Subject(subj['id'], subj['name']) for subj in student_data['enrollments']
             ]
@@ -149,6 +154,11 @@ class StudentController:
             return False
     
     def login(self, email: str, password: str):
+        # Validate email and password format
+        if not Student._validate_email(email) or not Student._validate_password(password):
+            print("Invalid email or password format.")
+            return False
+        
         student_record = self.database.find_student(email, password)
 
         if student_record is not None:
