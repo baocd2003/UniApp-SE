@@ -116,6 +116,38 @@ class StudentController:
         print(f"You are now enrolled in {len(self.current_student.enrollments)} out of 4 subjects.")
         return True
     
+    def remove_subject(self) -> bool:
+        """Remove a subject from current student's enrollment."""
+        if self.current_student is None:
+            print("No student is currently logged in.")
+            return False
+        
+        if not self.current_student.enrollments:
+            print("No subjects to remove.")
+            return False
+        
+        print("Your enrolled subjects:")
+        for i, subject in enumerate(self.current_student.enrollments, 1):
+            print(f"{i}. Subject:{subject.id} -- {subject.name} -- mark = {subject.mark} -- grade = {subject.grade}")
+        
+        try:
+            choice = int(input("Remove Subject by ID: "))
+            
+            for i, subject in enumerate(self.current_student.enrollments):
+                if subject.id == choice:
+                    removed_subject = self.current_student.enrollments.pop(i)
+                    self.database.update_student(self.current_student)
+                    print(f"Dropping Subject-{removed_subject.id}")
+                    print(f"You are now enrolled in {len(self.current_student.enrollments)} out of 4 subjects.")
+                    return True
+            
+            print("Subject not found.")
+            return False
+            
+        except ValueError:
+            print("Invalid subject ID. Please enter a number.")
+            return False
+    
     def login(self, email: str, password: str):
         student_record = self.database.find_student(email, password)
 
@@ -126,7 +158,18 @@ class StudentController:
             student_record["email"],
             student_record["password"]
         )
-            self.current_student.enrollments = student_record.get("enrollments", [])
+            # Transform raw enrollment dicts into Subject objects
+            from subject import Subject
+            raw_enrollments = student_record.get("enrollments", [])
+            self.current_student.enrollments = []
+            for enroll in raw_enrollments:
+                subject = Subject(enroll["id"], enroll["name"])
+                
+                if "mark" in enroll:
+                    subject.mark = enroll["mark"]
+                if "grade" in enroll:
+                    subject.grade = enroll["grade"]
+                self.current_student.enrollments.append(subject)
             return True
         
         return False
