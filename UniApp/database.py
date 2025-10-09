@@ -8,6 +8,7 @@ class JSONDatabase:
     
     def __init__(self, filename: str = "student.data.json"):
         self.filename = filename
+        print("DB file =>", os.path.abspath(self.filename))
         self._ensure_file_exists()
     
     def _ensure_file_exists(self):
@@ -52,3 +53,51 @@ class JSONDatabase:
     def get_all_subjects(self) -> List:
         data = self._read_data()
         return data.get("subjects", [])
+    
+     # Return all students as a list of dicts
+    def get_all_students(self) -> List[Dict]:
+        data = self._read_data()
+        return data.get("students", [])
+
+    # Find a student by integer ID; return None if not found
+    def find_by_id(self, student_id: int) -> Optional[Dict]:
+        for student in self.get_all_students():
+            try:
+                if int(student.get("id")) == student_id:
+                    return student
+            except (TypeError, ValueError):
+                continue
+        return None
+
+    # Update only the student's password; True on success, False if not found
+    def update_student_password(self, student_id: int, new_password: str) -> bool:
+        data = self._read_data()
+        changed = False
+        for student in data.get("students", []):
+            try:
+                if int(student.get("id")) == student_id:
+                    student["password"] = new_password
+                    changed = True
+                    break
+            except (TypeError, ValueError):
+                continue
+        if changed:
+            self._write_data(data)
+        return changed
+
+    # Remove a student by integer ID; True if removed, False if not found
+    def remove_by_id(self, student_id: int) -> bool:
+        data = self._read_data()
+        original_list = data.get("students", [])
+        new_list = []
+        for student in original_list:
+            try:
+                if int(student.get("id")) != student_id:
+                    new_list.append(student)
+            except (TypeError, ValueError):
+                new_list.append(student)
+        if len(new_list) == len(original_list):
+            return False
+        data["students"] = new_list
+        self._write_data(data)
+        return True
