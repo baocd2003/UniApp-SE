@@ -52,3 +52,10 @@ class JSONDatabase:
     def get_all_subjects(self) -> List:
         data = self._read_data()
         return data.get("subjects", [])
+
+    # Clear all students and subjects from the json file
+    def clear_database(self):
+        data = {"students": [], "subjects": []}
+        self._write_data(data)
+        print("Database has been cleared successfully.")
+
