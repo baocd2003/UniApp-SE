@@ -55,8 +55,8 @@ class UniApp:
             choice = input("Student Course Menu (c/e/r/s/x): ").lower()
             
             if choice == 'x':
-                self.student_controller.current_student = None
-                break
+                self.student_controller.logout_student()
+                self.run()
             elif choice == 'e':
                 self.student_controller.enroll_subject()
             elif choice == 'r':
@@ -64,7 +64,7 @@ class UniApp:
             elif choice == 's':
                 print("Showing Subjects")
             elif choice == 'c':
-                print("Changing Password")
+                self.student_controller.change_password()
     
     def _handle_admin_system(self):
         """Handle admin system operations."""
@@ -74,7 +74,13 @@ class UniApp:
             if choice == 'x':
                 break
             elif choice == 's':
-                print("Showing Students")
+                students = self.database.get_all_students()
+                if not students:
+                    print("(no students)")
+                else:
+                    print("Student List")
+                    for student in students:
+                        print(f"{student.get('name')} :: {student.get('id')} --> Email: {student.get('email')}")
             elif choice == 'c':
                 print("Clearing Students")
             elif choice == 'g':
@@ -82,7 +88,7 @@ class UniApp:
             elif choice == 'p':
                 self.student_controller.pass_fail_partition()
             elif choice == 'r':
-                print("Removing Student")
+                self.student_controller.remove_student()
             elif choice == 't':
                 subject_name = input("Enter subject name: ")
                 new_subject = self.subject_controller.create_subject(subject_name)

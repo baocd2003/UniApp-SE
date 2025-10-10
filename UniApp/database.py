@@ -107,3 +107,35 @@ class JSONDatabase:
                 return student
         return None
     
+    def update_student_password(self, student_id: str, new_password: str) -> bool:
+        data = self._read_data()
+        changed = False
+        for student in data.get("students", []):
+            try:
+                if int(student.get("id")) == int(student_id) or str(student.get("id")) == str(student_id) or student.get("id") == student_id:
+                    student["password"] = new_password
+                    changed = True
+                    break
+            except (TypeError, ValueError):
+                continue
+        if changed:
+            self._write_data(data)
+        return changed
+
+    # Remove a student by integer ID; True if removed, False if not found
+    def remove_by_id(self, student_id: str) -> bool:
+        data = self._read_data()
+        original_list = data.get("students", [])
+        new_list = []
+        for student in original_list:
+            try:
+                if int(student.get("id")) != int(student_id) and str(student.get("id")) != str(student_id) and student.get("id") != student_id:
+                    new_list.append(student)
+            except (TypeError, ValueError):
+                continue
+        if len(new_list) == len(original_list):
+            return False
+        data["students"] = new_list
+        self._write_data(data)
+        return True
+    

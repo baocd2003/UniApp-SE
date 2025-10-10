@@ -22,7 +22,7 @@ class SubjectController:
             existing_ids.append(subject['id'])
 
         while True:
-            new_id = random.randint(100, 9999)  # Generate random ID between 100 and 9999
+            new_id = random.randint(1, 999)  
             if new_id not in existing_ids:
                 return new_id
     
