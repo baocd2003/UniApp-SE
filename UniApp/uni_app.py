@@ -48,7 +48,7 @@ class UniApp:
             elif choice == 'r':
                 print("Removing Subject")
             elif choice == 's':
-                print("Showing Subjects")
+                 self.student_controller.show_enrolled_subject()
             elif choice == 'c':
                 print("Changing Password")
     
