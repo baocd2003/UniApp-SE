@@ -7,12 +7,6 @@
       "password": "Baocao12345",
       "enrollments": [
         {
-          "id": "001",
-          "name": "Mathematics",
-          "mark": 42,
-          "grade": "Z"
-        },
-        {
           "id": "004",
           "name": "Biology",
           "mark": 84,
@@ -23,6 +17,12 @@
           "name": "Test",
           "mark": 63,
           "grade": "P"
+        },
+        {
+          "id": "002",
+          "name": "Physics",
+          "mark": 77,
+          "grade": "D"
         }
       ]
     }

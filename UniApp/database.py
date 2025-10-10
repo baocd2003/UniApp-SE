@@ -9,7 +9,6 @@ class JSONDatabase:
     
     def __init__(self, filename: str = "student.data.json"):
         self.filename = filename
-        print("DB file =>", os.path.abspath(self.filename))
         self._ensure_file_exists()
     
     def _ensure_file_exists(self):

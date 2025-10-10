@@ -6,8 +6,8 @@ from subject_controller import SubjectController
 
 class UniApp:
     def __init__(self):
-        db_file = os.path.join(os.path.dirname(__file__), "student.data.json")
-        self.database = JSONDatabase(filename=db_file)
+        
+        self.database = JSONDatabase()
         self.student_controller = StudentController(self.database)
         self.subject_controller = SubjectController(self.database, self.student_controller)
     
