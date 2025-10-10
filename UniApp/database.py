@@ -2,6 +2,7 @@ import json
 import os
 from typing import List, Dict, Optional
 from student import Student
+import student
 from subject import Subject
 
 class JSONDatabase:
@@ -54,28 +55,65 @@ class JSONDatabase:
         data = self._read_data()
         return data.get("subjects", [])
     
-     # Return all students as a list of dicts
-    def get_all_students(self) -> List[Dict]:
+    def get_all_students(self) -> List:
         data = self._read_data()
         return data.get("students", [])
+    
+    def add_student(self, student: Student):
+        data = self._read_data()
+        data["students"].append({
+            "id": student.id,
+            "name": student.name,
+            "email": student.email,
+            "password": student.password,
+            "enrollments": [
+                {
+                    "id": subject.id,
+                    "name": subject.name,
+                    "mark": subject.mark,
+                    "grade": subject.grade
+                } for subject in student.enrollments
+            ] if student.enrollments is not None else []
+        })
+        self._write_data(data)
 
-    # Find a student by integer ID; return None if not found
-    def find_by_id(self, student_id: int) -> Optional[Dict]:
-        for student in self.get_all_students():
-            try:
-                if int(student.get("id")) == student_id:
-                    return student
-            except (TypeError, ValueError):
-                continue
+    def update_student(self, student: Student):
+        data = self._read_data()
+        for i, student_data in enumerate(data["students"]):
+            if student_data.get("id") == student.id:
+                data["students"][i] = {
+                    "id": student.id,
+                    "name": student.name,
+                    "email": student.email,
+                    "password": student.password,
+                    "enrollments": [
+                        {
+                            "id": subject.id,
+                            "name": subject.name,
+                            "mark": subject.mark,
+                            "grade": subject.grade
+                        } for subject in student.enrollments
+                    ] if student.enrollments is not None else []
+                }
+                break
+
+        self._write_data(data)
+
+    # Lookup student email & password
+    def find_student(self, email, password):
+        data = self._read_data()
+
+        for student in data.get("students", []):
+            if student.get("email") == email and student.get("password") == password:
+                return student
         return None
-
-    # Update only the student's password; True on success, False if not found
-    def update_student_password(self, student_id: int, new_password: str) -> bool:
+    
+    def update_student_password(self, student_id: str, new_password: str) -> bool:
         data = self._read_data()
         changed = False
         for student in data.get("students", []):
             try:
-                if int(student.get("id")) == student_id:
+                if int(student.get("id")) == int(student_id) or str(student.get("id")) == str(student_id) or student.get("id") == student_id:
                     student["password"] = new_password
                     changed = True
                     break
@@ -86,18 +124,19 @@ class JSONDatabase:
         return changed
 
     # Remove a student by integer ID; True if removed, False if not found
-    def remove_by_id(self, student_id: int) -> bool:
+    def remove_by_id(self, student_id: str) -> bool:
         data = self._read_data()
         original_list = data.get("students", [])
         new_list = []
         for student in original_list:
             try:
-                if int(student.get("id")) != student_id:
+                if int(student.get("id")) != int(student_id) and str(student.get("id")) != str(student_id) and student.get("id") != student_id:
                     new_list.append(student)
             except (TypeError, ValueError):
-                new_list.append(student)
+                continue
         if len(new_list) == len(original_list):
             return False
         data["students"] = new_list
         self._write_data(data)
         return True
+    

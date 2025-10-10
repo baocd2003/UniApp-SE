@@ -33,31 +33,40 @@ class UniApp:
             if choice == 'x':
                 break
             elif choice == 'r':
-                print("Registering Student")
+                self.student_controller.register_student(
+                    email=input("Enter email: "),
+                    password=input("Enter password: ")
+                )
             elif choice == 'l':
-                if self.student_controller.login():
-                    self._handle_student_menu()
-
-    # Student course menu: provides Change Password and placeholders for other actions
+                attempts = 3
+                for attempt in range(attempts):
+                    email = input("Enter email: ")
+                    password = input("Enter password: ")
+                    
+                    if self.student_controller.login(email, password):
+                        print("Login Successful")
+                        self._handle_student_menu()
+                    else:
+                        print("Invalid email or password, try again")
+                else:
+                    print("Too many failed attempts. Returning to the Student menu.")           
+    
     def _handle_student_menu(self):
         """Handle student course menu after successful login."""
         while True:
             choice = input("Student Course Menu (c/e/r/s/x): ").lower().strip()
             if choice == 'x':
-                self.student_controller.current_student = None
-                break
+                self.student_controller.logout_student()
+                self.run()
+            elif choice == 'e':
+                self.student_controller.enroll_subject()
+            elif choice == 'r':
+                self.student_controller.remove_subject()
+            elif choice == 's':
+                print("Showing Subjects")
             elif choice == 'c':
                 self.student_controller.change_password()
-            elif choice == 'e':
-                print("Enrol subject (TBD)")
-            elif choice == 'r':
-                print("Remove subject (TBD)")
-            elif choice == 's':
-                print("Show subjects (TBD)")
-            else:
-                print("Unsupported option.")
-
-    # Admin system: show all students and remove a student by integer ID
+    
     def _handle_admin_system(self):
         """Handle admin system operations."""
         while True:
@@ -69,21 +78,21 @@ class UniApp:
                 if not students:
                     print("(no students)")
                 else:
-                    print("All students:")
+                    print("Student List")
                     for student in students:
-                        print(f"- ID: {student.get('id')}, Name: {student.get('name')}, Email: {student.get('email')}")
+                        print(f"{student.get('name')} :: {student.get('id')} --> Email: {student.get('email')}")
+            elif choice == 'c':
+                print("Clearing Students")
+            elif choice == 'g':
+                self.student_controller.group_by_grade()
+            elif choice == 'p':
+                self.student_controller.pass_fail_partition()
             elif choice == 'r':
-                student_id_text = input("Enter student ID (int): ").strip()
-                try:
-                    student_id = int(student_id_text)
-                except ValueError:
-                    print("Invalid ID format.")
-                    continue
-                removed = self.database.remove_by_id(student_id)
-                print(f"Student {student_id} removed." if removed else f"Student {student_id} not found.")
-            else:
-                print("Unsupported option.")
-
+                self.student_controller.remove_student()
+            elif choice == 't':
+                subject_name = input("Enter subject name: ")
+                new_subject = self.subject_controller.create_subject(subject_name)
+                print(f"Created new subject: {new_subject}")
 
 if __name__ == "__main__":
     app = UniApp()

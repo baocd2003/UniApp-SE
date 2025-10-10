@@ -1,40 +1,59 @@
 {
   "students": [
     {
-      "id": 673358,
+      "id": "000001",
       "name": "bao",
       "email": "bao.cao@university.com",
-      "password": "Baocao1234",
-      "enrollments": []
+      "password": "Baocao12345",
+      "enrollments": [
+        {
+          "id": "001",
+          "name": "Mathematics",
+          "mark": 42,
+          "grade": "Z"
+        },
+        {
+          "id": "004",
+          "name": "Biology",
+          "mark": 84,
+          "grade": "D"
+        },
+        {
+          "id": "007",
+          "name": "Test",
+          "mark": 63,
+          "grade": "P"
+        }
+      ]
     }
   ],
   "subjects": [
     {
-      "id": 541,
+      "id": "001",
       "name": "Mathematics"
     },
     {
-      "id": 455,
+      "id": "002",
       "name": "Physics"
     },
     {
-      "id": 742,
+      "id": "003",
       "name": "Chemistry"
     },
     {
-      "id": 1097,
+      "id": "004",
       "name": "Biology"
     },
     {
-      "id": 764,
+      "id": "005",
       "name": "Computer Science"
     },
     {
-      "id": 97,
+      "id": "006",
       "name": "English Literature"
     },
     {
-      "id": 6271,
+      "id": "007",
       "name": "Test"
     }
   ]
