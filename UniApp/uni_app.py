@@ -73,7 +73,11 @@ class UniApp:
             elif choice == 's':
                 print("Showing Students")
             elif choice == 'c':
-                print("Clearing Students")
+                 confirm = input("Are you sure you want to clear the entire database? (y/n): ").lower()
+                    if confirm == 'y':
+                        self.database.clear_database()
+                    else:
+                        print("Operation cancelled.")
             elif choice == 'g':
                 self.student_controller.group_by_grade()
             elif choice == 'p':
