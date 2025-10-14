@@ -62,7 +62,7 @@ class UniApp:
             elif choice == 'r':
                 self.student_controller.remove_subject()
             elif choice == 's':
-                 self.student_controller.show_enrolled_subject()
+                self.student_controller.show_enrolled_subject()
             elif choice == 'c':
                 self.student_controller.change_password()
     

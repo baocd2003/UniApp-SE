@@ -259,27 +259,18 @@ class StudentController:
             return False
 
     def show_enrolled_subject(self):
-        if not self.current_student:
+        """Display all enrolled subjects for current student using simple array approach"""
+        if self.current_student is None:
             print("No student is currently logged in.")
             return
-        data = self.database._read_data()
-        students = data.get("students", [])
-        subjects = data.get("subjects", [])
-
-        current_email = getattr(self.current_student, "email", None)
-        student = next((s for s in students if s.get("email") == self.current_student.email), None)
-        if not student:
-            print("Student record not found.")
+        
+        enrollments = self.current_student.enrollments
+        
+        if not enrollments:
+            print("Showing 0 subjects")
             return
-
-        enrolled_ids = student.get("enrolled_subjects", [])
-        if not enrolled_ids:
-            print("You have not enrolled in any subjects yet.")
-            return
-
-        print("Your enrolled subjects:")
-        for subj_id in enrolled_ids:
-            subject = next((sub for sub in subjects if sub.get("id") == subj_id), None)
-            if subject:
-                print(f"- {subject['name']} (ID: {subject['id']})")
+        
+        print(f"Showing {len(enrollments)} subjects")
+        for subject in enrollments:
+            print(f"[ Subject::{subject.id} -- {subject.name} -- mark = {subject.mark} -- grade = {subject.grade} ]")
 
