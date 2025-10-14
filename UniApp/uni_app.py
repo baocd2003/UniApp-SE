@@ -86,7 +86,7 @@ class UniApp:
                     for student in students:
                         print(f"{student.get('name')} :: {student.get('id')} --> Email: {student.get('email')}")
             elif choice == 'c':
-                print("Clearing Students")
+                self.database.clear_database()
             elif choice == 'g':
                 self.student_controller.group_by_grade()
             elif choice == 'p':
