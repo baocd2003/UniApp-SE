@@ -42,6 +42,10 @@ class UniApp:
                 for attempt in range(attempts):
                     email = input("Enter email: ")
                     password = input("Enter password: ")
+                
+                    if not email or not password:
+                        print("Please enter both email and password.")
+                        continue
                     
                     if self.student_controller.login(email, password):
                         print("Login Successful")
@@ -63,7 +67,7 @@ class UniApp:
             elif choice == 'r':
                 self.student_controller.remove_subject()
             elif choice == 's':
-                print("Showing Subjects")
+                self.student_controller.show_enrolled_subject()
             elif choice == 'c':
                 self.student_controller.change_password()
     
@@ -82,7 +86,7 @@ class UniApp:
                     for student in students:
                         print(f"{student.get('name')} :: {student.get('id')} --> Email: {student.get('email')}")
             elif choice == 'c':
-                print("Clearing Students")
+                self.database.clear_database()
             elif choice == 'g':
                 self.student_controller.group_by_grade()
             elif choice == 'p':

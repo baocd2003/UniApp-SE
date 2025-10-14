@@ -139,3 +139,10 @@ class JSONDatabase:
         self._write_data(data)
         return True
     
+
+    # Clear all students from the json file
+    def clear_database(self):
+        data = {"students": []}
+        self._write_data(data)
+        print("Database has been cleared successfully.")
+

@@ -44,48 +44,7 @@ class StudentController:
             if student['email'] == email:
                 return student
         return None
-
-        if not email or not password:
-            print("Email and password are required.")
-            return False
-        
-        # Validate email and password format
-        if not Student._validate_email(email) or not Student._validate_password(password):
-            print("Invalid email or password format.")
-            return False
-        
-        # Find student by email
-        student_data = self.is_existed(email)
-        if student_data is None:
-            print("Student does not exist.")
-            return False
-        
-        # Check password
-        if student_data['password'] != password:
-            print("Incorrect password.")
-            return False
-        
-        self.current_student = Student(
-            student_data['id'],
-            student_data['name'], 
-            student_data['email'],
-            student_data['password']
-        )
-        # Load enrollments if they exist
-        if 'enrollments' in student_data:
-            self.current_student.enrollments = []
-            for subj in student_data['enrollments']:
-                subject = Subject(subj['id'], subj['name'])
-                # Override random values with stored values
-                if 'mark' in subj:
-                    subject.mark = subj['mark']
-                if 'grade' in subj:
-                    subject.grade = subj['grade']
-                self.current_student.enrollments.append(subject)
-        
-        print(f"Welcome {self.current_student.name}!")
-        return True
-    
+  
     def logout_student(self):
         
         if self.current_student:
@@ -299,3 +258,20 @@ class StudentController:
         else:
             print(f"Student {student_id} not found.")
             return False
+
+    def show_enrolled_subject(self):
+        """Display all enrolled subjects for current student using simple array approach"""
+        if self.current_student is None:
+            print("No student is currently logged in.")
+            return
+        
+        enrollments = self.current_student.enrollments
+        
+        if not enrollments:
+            print("Showing 0 subjects")
+            return
+        
+        print(f"Showing {len(enrollments)} subjects")
+        for subject in enrollments:
+            print(f"[ Subject::{subject.id} -- {subject.name} -- mark = {subject.mark} -- grade = {subject.grade} ]")
+
