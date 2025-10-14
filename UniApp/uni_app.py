@@ -40,6 +40,10 @@ class UniApp:
                 for attempt in range(attempts):
                     email = input("Enter email: ")
                     password = input("Enter password: ")
+                
+                    if not email or not password:
+                        print("Please enter both email and password.")
+                        continue
                     
                     if self.student_controller.login(email, password):
                         print("Login Successful")
