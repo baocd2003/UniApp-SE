@@ -4,7 +4,7 @@
       "id": "000001",
       "name": "bao",
       "email": "bao.cao@university.com",
-      "password": "Baocao12345",
+      "password": "Baocao1234",
       "enrollments": [
         {
           "id": "004",
@@ -27,8 +27,8 @@
         {
           "id": "001",
           "name": "Mathematics",
-          "mark": 29,
-          "grade": "F"
+          "mark": 99,
+          "grade": "HD"
         }
       ]
     }

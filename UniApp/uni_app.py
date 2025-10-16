@@ -1,7 +1,8 @@
 from database import JSONDatabase
 from student_controller import StudentController
 from subject_controller import SubjectController
-
+import tkinter as tk
+from gui_uni_app import GUIUniApp
 
 class UniApp:
     def __init__(self):
@@ -11,10 +12,23 @@ class UniApp:
     
     def run(self):
         while True:
+            mode_choice = input("Choose interface: (C)LI or (G)UI or X to exit: ").upper()
+            
+            if mode_choice == 'X':
+                print("Thank You")
+                break
+            elif mode_choice == 'C':
+                self._run_cli_mode()
+            elif mode_choice == 'G':
+                self._run_gui_mode()
+            else:
+                print("Invalid choice. Please enter C for CLI, G for GUI, or X to exit.")
+    
+    def _run_cli_mode(self):
+        while True:
             choice = input("University System: (A)dmin, (S)tudent, or X : ").upper()
             
             if choice == 'X':
-                print("Thank You")
                 break
             elif choice == 'S':
                 # print("Student System")
@@ -22,6 +36,11 @@ class UniApp:
             elif choice == 'A':
                 # print("Admin System")
                 self._handle_admin_system()
+    
+    def _run_gui_mode(self):
+        root = tk.Tk()
+        app = GUIUniApp(root)
+        root.mainloop()
     
     def _handle_student_system(self):
         """Handle student system operations."""
@@ -54,7 +73,6 @@ class UniApp:
                     print("Too many failed attempts. Returning to the Student menu.")           
     
     def _handle_student_menu(self):
-        """Handle student course menu after successful login."""
         while True:
             choice = input("Student Course Menu (c/e/r/s/x): ").lower()
             
@@ -71,7 +89,6 @@ class UniApp:
                 self.student_controller.change_password()
     
     def _handle_admin_system(self):
-        """Handle admin system operations."""
         while True:
             choice = input("Admin System (c/g/p/r/s/x/t): ").lower()
             
