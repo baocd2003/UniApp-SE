@@ -5,28 +5,51 @@ from database import JSONDatabase
 import random
 import re
 from subject import Subject
+from tkinter import messagebox
+
 class StudentController:
     # Initialize controller; keep database handle and current logged-in student
     def __init__(self, database: JSONDatabase):
         self.database = database
         self.current_student: Optional[Student] = None
 
-    def register_student(self, email: str, password: str) -> bool:
+    def register_student(self, email: str, password: str, name: str = None, isGui: bool = False) -> bool:
         # Generate a unique student ID
         student_id = self._generate_unique_student_id()
         
         if not Student._validate_email(email) or not Student._validate_password(password):
-            print("Invalid email or password format.")
+            if isGui:
+                messagebox.showerror("Error", "Invalid email or password format.")
+            else:
+                print("Invalid email or password format.")
             return False
-        print("email and password format acceptable")
+        
+        if not isGui:
+            print("email and password format acceptable")
+            
         student_existed = self.is_existed(email)
         if student_existed is not None:
-            print(f"Student {student_existed['name']} already exists.")
+            if isGui:
+                messagebox.showerror("Error", f"Student {student_existed['name']} already exists.")
+            else:
+                print(f"Student {student_existed['name']} already exists.")
             return False
-        name = input("Enter name: ")
+            
+        if name is None and not isGui:
+            name = input("Enter name: ")
+        elif name is None:
+            # For GUI, name should be provided as parameter
+            if isGui:
+                messagebox.showerror("Error", "Name is required.")
+            return False
+            
         new_student = Student(student_id, name, email, password)
         self.database.add_student(new_student)
-        print(f"Enrolled student {name}")
+        
+        if isGui:
+            messagebox.showinfo("Success", f"Enrolled student {name}")
+        else:
+            print(f"Enrolled student {name}")
         return True
     
     def _generate_unique_student_id(self) -> int:
@@ -45,23 +68,33 @@ class StudentController:
                 return student
         return None
   
-    def logout_student(self):
-        
+    def logout_student(self, isGui: bool = False):
         if self.current_student:
-            print(f"Goodbye {self.current_student.name}!")
+            if isGui:
+                messagebox.showinfo("Goodbye", f"Goodbye {self.current_student.name}!")
+            else:
+                print(f"Goodbye {self.current_student.name}!")
             self.current_student = None
         else:
-            print("No student is currently logged in.")
+            if isGui:
+                messagebox.showwarning("Warning", "No student is currently logged in.")
+            else:
+                print("No student is currently logged in.")
 
-    def enroll_subject(self) -> bool:
+    def enroll_subject(self, isGui: bool = False) -> bool:
         if self.current_student is None:
-            print("No student is currently logged in.")
+            if isGui:
+                messagebox.showerror("Error", "No student is currently logged in.")
+            else:
+                print("No student is currently logged in.")
             return False
         
         if len(self.current_student.enrollments) >= 4:
-            print("Students are allowed to enroll in 4 subjects only.")
+            if isGui:
+                messagebox.showwarning("Warning", "Students are allowed to enroll in 4 subjects only.")
+            else:
+                print("Students are allowed to enroll in 4 subjects only.")
             return False
-        
         
         subject_list = self.database.get_all_subjects()
         
@@ -69,7 +102,10 @@ class StudentController:
         available_subjects = [s for s in subject_list if s['id'] not in enrolled_ids]
         
         if not available_subjects:
-            print("No available subjects to enroll in.")
+            if isGui:
+                messagebox.showinfo("Info", "No available subjects to enroll in.")
+            else:
+                print("No available subjects to enroll in.")
             return False
         
         random_subject_data = available_subjects[random.randint(0, len(available_subjects)-1)]
@@ -79,26 +115,48 @@ class StudentController:
         self.current_student.enrollments.append(new_subject)
         self.database.update_student(self.current_student)
         
-        print(f"Enrolled in {new_subject.name} (ID: {new_subject.id})")
-        print(f"Assigned mark: {new_subject.mark}, Grade: {new_subject.grade}")
-        print(f"You are now enrolled in {len(self.current_student.enrollments)} out of 4 subjects.")
+        if isGui:
+            message = f"Enrolled in {new_subject.name} (ID: {new_subject.id})\n"
+            message += f"Assigned mark: {new_subject.mark}, Grade: {new_subject.grade}\n"
+            message += f"You are now enrolled in {len(self.current_student.enrollments)} out of 4 subjects."
+            messagebox.showinfo("Success", message)
+        else:
+            print(f"Enrolled in {new_subject.name} (ID: {new_subject.id})")
+            print(f"Assigned mark: {new_subject.mark}, Grade: {new_subject.grade}")
+            print(f"You are now enrolled in {len(self.current_student.enrollments)} out of 4 subjects.")
         return True
     
-    def remove_subject(self) -> bool:
+    def remove_subject(self, subject_id: str = None, isGui: bool = False) -> bool:
         if self.current_student is None:
-            print("No student is currently logged in.")
+            if isGui:
+                messagebox.showerror("Error", "No student is currently logged in.")
+            else:
+                print("No student is currently logged in.")
             return False
         
         if not self.current_student.enrollments:
-            print("No subjects to remove.")
+            if isGui:
+                messagebox.showinfo("Info", "No subjects to remove.")
+            else:
+                print("No subjects to remove.")
             return False
         
-        print("Your enrolled subjects:")
-        for i, subject in enumerate(self.current_student.enrollments, 1):
-            print(f"{i}. Subject:{subject.id} -- {subject.name} -- mark = {subject.mark} -- grade = {subject.grade}")
+        if not isGui:
+            print("Your enrolled subjects:")
+            for i, subject in enumerate(self.current_student.enrollments, 1):
+                print(f"{i}. Subject:{subject.id} -- {subject.name} -- mark = {subject.mark} -- grade = {subject.grade}")
         
         try:
-            choice_input = input("Remove Subject by ID: ")
+            if subject_id is None and not isGui:
+                choice_input = input("Remove Subject by ID: ")
+            elif subject_id is None:
+                # For GUI, subject_id should be provided as parameter
+                if isGui:
+                    messagebox.showerror("Error", "Subject ID is required.")
+                return False
+            else:
+                choice_input = subject_id
+                
             # Handle both string and integer IDs
             try:
                 choice = int(choice_input)
@@ -109,23 +167,37 @@ class StudentController:
                 if subject.id == choice or str(subject.id) == str(choice) or int(subject.id) == int(choice_input):
                     removed_subject = self.current_student.enrollments.pop(i)
                     self.database.update_student(self.current_student)
-                    print(f"Dropping Subject-{removed_subject.id}")
-                    print(f"You are now enrolled in {len(self.current_student.enrollments)} out of 4 subjects.")
+                    
+                    if isGui:
+                        message = f"Dropping Subject-{removed_subject.id}\n"
+                        message += f"You are now enrolled in {len(self.current_student.enrollments)} out of 4 subjects."
+                        messagebox.showinfo("Success", message)
+                    else:
+                        print(f"Dropping Subject-{removed_subject.id}")
+                        print(f"You are now enrolled in {len(self.current_student.enrollments)} out of 4 subjects.")
                     return True
             
             # If no subject found, print error once
-            print("Subject not found.")
+            if isGui:
+                messagebox.showerror("Error", "Subject not found.")
+            else:
+                print("Subject not found.")
             return False
             
         except ValueError:
-            print("Invalid subject ID. Please enter a number.")
+            if isGui:
+                messagebox.showerror("Error", "Invalid subject ID. Please enter a number.")
+            else:
+                print("Invalid subject ID. Please enter a number.")
             return False
     
-    def login(self, email: str, password: str):
-
+    def login(self, email: str, password: str, isGui: bool = False):
         # Validate email and password format
         if not Student._validate_email(email) or not Student._validate_password(password):
-            print("Invalid email or password format.")
+            if isGui:
+                messagebox.showerror("Error", "Invalid email or password format.")
+            else:
+                print("Invalid email or password format.")
             return False
         
         student_record = self.database.find_student(email, password)
@@ -138,7 +210,6 @@ class StudentController:
             student_record["password"]
         )
             # Transform raw enrollment dicts into Subject objects
-            from subject import Subject
             raw_enrollments = student_record.get("enrollments", [])
             self.current_student.enrollments = []
             for enroll in raw_enrollments:
@@ -150,10 +221,14 @@ class StudentController:
                     subject.grade = enroll["grade"]
                 self.current_student.enrollments.append(subject)
             return True
-        
-        return 
+        else:
+                if isGui:
+                    messagebox.showerror("Error", "Invalid email or password.")
+                else:
+                    print("Invalid email or password.")
+        return False 
     
-    def group_by_grade(self):
+    def group_by_grade(self, isGui: bool = False):
         students = self.database.get_all_students()
     
         grade_hd = []
@@ -181,13 +256,23 @@ class StudentController:
             else:
                 grade_z.append((student.get("name"), avg_mark))
 
-        print("\nHD --> ", grade_hd if grade_hd else "[]")
-        print("D --> ", grade_d if grade_d else "[]")
-        print("C --> ", grade_c if grade_c else "[]")
-        print("P --> ", grade_p if grade_p else "[]")
-        print("Z --> ", grade_z if grade_z else "[]")  
+        if isGui:
+            # Return the data for GUI processing
+            return {
+                'HD': grade_hd if grade_hd else [],
+                'D': grade_d if grade_d else [],
+                'C': grade_c if grade_c else [],
+                'P': grade_p if grade_p else [],
+                'Z': grade_z if grade_z else []
+            }
+        else:
+            print("\nHD --> ", grade_hd if grade_hd else "[]")
+            print("D --> ", grade_d if grade_d else "[]")
+            print("C --> ", grade_c if grade_c else "[]")
+            print("P --> ", grade_p if grade_p else "[]")
+            print("Z --> ", grade_z if grade_z else "[]")  
     
-    def pass_fail_partition(self):
+    def pass_fail_partition(self, isGui: bool = False):
         students = self.database.get_all_students()
 
         passed = []
@@ -206,72 +291,120 @@ class StudentController:
             else:
                 failed.append((student.get("name"), avg_mark))
 
-        print("PASS:")
-        if passed:
-            for name, avg in passed:
-                print(f"{name}")
+        if isGui:
+            # Return the data for GUI processing
+            return {
+                'passed': passed if passed else [],
+                'failed': failed if failed else []
+            }
         else:
-            print("No students Passed")
-            
-        print("FAIL:")
-        if failed:
-            for name, avg in failed:
-                print(f"{name}")
-        else:
-            print("No students Failed")
+            print("PASS:")
+            if passed:
+                for name, avg in passed:
+                    print(f"{name}")
+            else:
+                print("No students Passed")
+                
+            print("FAIL:")
+            if failed:
+                for name, avg in failed:
+                    print(f"{name}")
+            else:
+                print("No students Failed")
 
-    def change_password(self) -> bool:
+    def change_password(self, new_password: str = None, confirm_password: str = None, isGui: bool = False) -> bool:
         if self.current_student is None:
-            print("No student is currently logged in.")
+            if isGui:
+                messagebox.showerror("Error", "No student is currently logged in.")
+            else:
+                print("No student is currently logged in.")
             return False
         
-        print("Updating Password")
-        new_password = input("New Password: ")
-        confirm_password = input("Confirm Password: ")
+        if not isGui:
+            print("Updating Password")
+            new_password = input("New Password: ")
+            confirm_password = input("Confirm Password: ")
+        elif new_password is None or confirm_password is None:
+            # For GUI, passwords should be provided as parameters
+            if isGui:
+                messagebox.showerror("Error", "New password and confirmation are required.")
+            return False
         
         # Check if passwords match
         if new_password != confirm_password:
-            print("Password does not match - try again")
+            if isGui:
+                messagebox.showerror("Error", "Password does not match - try again")
+            else:
+                print("Password does not match - try again")
             return False
         
         # Validate new password format
         if not Student._validate_password(new_password):
-            print("Incorrect password format")
+            if isGui:
+                messagebox.showerror("Error", "Incorrect password format")
+            else:
+                print("Incorrect password format")
             return False
         
         # Update password in database
         if self.database.update_student_password(self.current_student.id, new_password):
             self.current_student.password = new_password
-            print("Password updated")
+            if isGui:
+                messagebox.showinfo("Success", "Password updated")
+            else:
+                print("Password updated")
             return True
         else:
-            print("Failed to update password")
+            if isGui:
+                messagebox.showerror("Error", "Failed to update password")
+            else:
+                print("Failed to update password")
             return False
         
-    def remove_student(self) -> bool:
-        student_id = input("Remove by ID: ")
+    def remove_student(self, student_id: str = None, isGui: bool = False) -> bool:
+        if student_id is None and not isGui:
+            student_id = input("Remove by ID: ")
+        elif student_id is None:
+            # For GUI, student_id should be provided as parameter
+            if isGui:
+                messagebox.showerror("Error", "Student ID is required.")
+            return False
         
         if self.database.remove_by_id(student_id):
-            print(f"Removing Student {student_id} Account")
+            if isGui:
+                messagebox.showinfo("Success", f"Removing Student {student_id} Account")
+            else:
+                print(f"Removing Student {student_id} Account")
             self.current_student = None
             return True
         else:
-            print(f"Student {student_id} not found.")
+            if isGui:
+                messagebox.showerror("Error", f"Student {student_id} not found.")
+            else:
+                print(f"Student {student_id} not found.")
             return False
 
-    def show_enrolled_subject(self):
-        """Display all enrolled subjects for current student using simple array approach"""
+    def show_enrolled_subject(self, isGui=False):
         if self.current_student is None:
-            print("No student is currently logged in.")
+            if isGui:
+                messagebox.showerror("Error", "No student is currently logged in.")
+            else:
+                print("No student is currently logged in.")
             return
         
         enrollments = self.current_student.enrollments
         
         if not enrollments:
-            print("Showing 0 subjects")
+            if isGui:
+                messagebox.showinfo("No Subjects", "Showing 0 subjects")
+            else:
+                print("Showing 0 subjects")
             return
         
-        print(f"Showing {len(enrollments)} subjects")
-        for subject in enrollments:
-            print(f"[ Subject::{subject.id} -- {subject.name} -- mark = {subject.mark} -- grade = {subject.grade} ]")
+        if isGui:
+            return enrollments
+        else:
+            print(f"Showing {len(enrollments)} subjects")
+            for subject in enrollments:
+                print(f"[ Subject::{subject.id} -- {subject.name} -- mark = {subject.mark} -- grade = {subject.grade} ]")
 
