@@ -69,6 +69,8 @@ class UniApp:
                         self._handle_student_menu()
                     else:
                         print("Invalid email or password, try again")
+                        break           
+
                 else:
                     print("Too many failed attempts. Returning to the Student menu.")           
     

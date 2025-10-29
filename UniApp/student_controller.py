@@ -51,15 +51,15 @@ class StudentController:
             print(f"Enrolled student {name}")
         return True
     
-    def _generate_unique_student_id(self) -> int:
+    def _generate_unique_student_id(self) -> str:
         existing_ids = []
         for student in self.database.get_all_students():
             existing_ids.append(student['id'])
         # Generate 6-digit ID ranging from 000001 to 999999
         new_id = random.randint(1, 999999)
-        while new_id in existing_ids:
+        while new_id in existing_ids or Student.format_student_id(new_id) in existing_ids:
             new_id = random.randint(1, 999999)
-        return new_id
+        return Student.format_student_id(new_id)
     
     def is_existed(self, email: str) -> Student:
         for student in self.database.get_all_students():
@@ -368,7 +368,21 @@ class StudentController:
             if isGui:
                 messagebox.showerror("Error", "Student ID is required.")
             return False
-        
+        current_student =  self.database.get_student_by_id(student_id)
+        # Check student has enrollments
+        if current_student is None:
+            if isGui:
+                messagebox.showerror("Error", f"Student {student_id} not found.")
+            else:
+                print(f"Student {student_id} not found.")
+            return False
+        else:
+            if current_student.get("enrollments"):
+                if isGui:
+                    messagebox.showerror("Error", f"Student {student_id} has enrolled subjects. Cannot remove.")
+                else:
+                    print(f"Student {student_id} has enrolled subjects. Cannot remove.")
+                return False
         if self.database.remove_by_id(student_id):
             if isGui:
                 messagebox.showinfo("Success", f"Removing Student {student_id} Account")

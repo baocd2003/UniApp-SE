@@ -107,6 +107,21 @@ class JSONDatabase:
                 return student
         return None
     
+    # Get student by ID
+    def get_student_by_id(self, student_id: str) -> Optional[Dict]:
+        data = self._read_data()
+        
+        for student in data.get("students", []):
+            try:
+                # Handle both string and integer ID comparisons
+                if (int(student.get("id")) == int(student_id) or 
+                    str(student.get("id")) == str(student_id) or 
+                    student.get("id") == student_id):
+                    return student
+            except (TypeError, ValueError):
+                continue
+        return None
+    
     def update_student_password(self, student_id: str, new_password: str) -> bool:
         data = self._read_data()
         changed = False
@@ -145,4 +160,5 @@ class JSONDatabase:
         data = {"students": []}
         self._write_data(data)
         print("Database has been cleared successfully.")
+
 

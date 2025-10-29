@@ -4,7 +4,7 @@
       "id": "000001",
       "name": "bao",
       "email": "bao.cao@university.com",
-      "password": "Baocao1234",
+      "password": "Baocao12345",
       "enrollments": [
         {
           "id": "004",
@@ -31,6 +31,13 @@
           "grade": "HD"
         }
       ]
+    },
+    {
+      "id": "819792",
+      "name": "Raymond",
+      "email": "ray.m@university.com",
+      "password": "Raymond1234",
+      "enrollments": []
     }
   ],
   "subjects": [
