@@ -112,10 +112,6 @@ class UniApp:
                 self.student_controller.pass_fail_partition()
             elif choice == 'r':
                 self.student_controller.remove_student()
-            elif choice == 't':
-                subject_name = input("Enter subject name: ")
-                new_subject = self.subject_controller.create_subject(subject_name)
-                print(f"Created new subject: {new_subject}")
 
 if __name__ == "__main__":
     app = UniApp()

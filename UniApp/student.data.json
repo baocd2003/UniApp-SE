@@ -33,11 +33,30 @@
       ]
     },
     {
-      "id": "819792",
-      "name": "Raymond",
-      "email": "ray.m@university.com",
-      "password": "Raymond1234",
-      "enrollments": []
+      "id": "612161",
+      "name": "Chris",
+      "email": "chris.c@university.com",
+      "password": "Chris12345",
+      "enrollments": [
+        {
+          "id": "005",
+          "name": "Computer Science",
+          "mark": 78,
+          "grade": "D"
+        },
+        {
+          "id": "001",
+          "name": "Mathematics",
+          "mark": 47,
+          "grade": "F"
+        },
+        {
+          "id": "004",
+          "name": "Biology",
+          "mark": 68,
+          "grade": "C"
+        }
+      ]
     }
   ],
   "subjects": [
