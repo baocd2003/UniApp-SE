@@ -1,5 +1,13 @@
 {
-  "students": [],
+  "students": [
+    {
+      "id": "210682",
+      "name": "Raymond",
+      "email": "Raymond.Chang@university.com",
+      "password": "Raymond12345",
+      "enrollments": []
+    }
+  ],
   "subjects": [
     {
       "id": 541,
