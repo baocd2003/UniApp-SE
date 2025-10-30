@@ -67,10 +67,10 @@ class UniApp:
                     if self.student_controller.login(email, password):
                         print("Login Successful")
                         self._handle_student_menu()
+                        break
                     else:
                         print("Invalid email or password, try again")
-                        break           
-
+                        
                 else:
                     print("Too many failed attempts. Returning to the Student menu.")           
     

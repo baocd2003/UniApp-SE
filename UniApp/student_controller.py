@@ -195,8 +195,6 @@ class StudentController:
         if not Student._validate_email(email) or not Student._validate_password(password):
             if isGui:
                 messagebox.showerror("Error", "Invalid email or password format.")
-            else:
-                print("Invalid email or password format.")
             return False
         
         student_record = self.database.find_student(email, password)
@@ -221,11 +219,9 @@ class StudentController:
                 self.current_student.enrollments.append(subject)
             return True
         else:
-                if isGui:
-                    messagebox.showerror("Error", "Invalid email or password.")
-                else:
-                    print("Invalid email or password.")
-        return False 
+            if isGui:
+                messagebox.showerror("Error", "Invalid email or password.")
+            return False
     
     def group_by_grade(self, isGui: bool = False):
         students = self.database.get_all_students()
